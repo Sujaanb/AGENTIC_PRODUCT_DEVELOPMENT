@@ -1,3 +1,6 @@
 crewai
 streamlit
+atlassian-python-api
 python-dotenv
+crewai[tools]
+requests

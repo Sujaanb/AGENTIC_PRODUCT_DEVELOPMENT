@@ -1,0 +1,59 @@
+# src/website_automation/config/tasks.yaml
+user_stories_task:
+  description: >
+    Analyze the provided business requirements documents and the user prompt. 
+    Extract a list of website user stories (features or requirements) with acceptance criteria. 
+    Present the result as a JSON array of user story objects.
+  expected_output: >
+    A valid JSON array of user stories, where each story has a title, description, 
+    and acceptance criteria.
+  agent: business_analyst
+
+design_task:
+  description: >
+    Using the approved user stories, create a high-level design outline for the website. 
+    Describe the overall layout, page structure, and visual style for each feature. 
+    Do not produce images, only a textual design specification.
+  expected_output: >
+    A detailed design document (textual) covering the UI/UX for the website. 
+    Include sections for each user story describing how that requirement will be addressed in the UI.
+  agent: designer
+  output_file: design/design.txt    # Save design output to a file in design/ folder
+
+development_task:
+  description: >
+    Implement the website as per the user stories and design. 
+    Develop the required HTML, CSS, and JavaScript files. 
+    Use best practices and ensure the code fulfills all acceptance criteria. 
+    Save the files in the output/ directory (e.g., index.html, styles.css, script.js).
+  expected_output: >
+    The website's front-end code (HTML/CSS/JS files) created in the output folder.
+  agent: developer
+  context:
+    - user_stories_task
+    - design_task
+
+testing_task:
+  description: >
+    Validate the implemented website against the user stories and design. 
+    For each user story, check if the acceptance criteria are met by the current implementation. 
+    If any issue is found, list it. If everything is satisfactory, confirm that all tests passed.
+  expected_output: >
+    A test report. If issues are found, list them (with "ISSUES FOUND:" prefix). 
+    If all tests pass, explicitly state "ALL TESTS PASSED".
+  agent: tester
+  context:
+    - user_stories_task
+    - design_task
+
+fix_task:
+  description: >
+    Address the issues identified by the tester. For each reported issue, modify the relevant code. 
+    Ensure all acceptance criteria are now met. Update or create files in the output/ folder as needed.
+  expected_output: >
+    Updated code with fixes applied. All tests should pass after this.
+  agent: developer
+  context:
+    - user_stories_task
+    - design_task
+    - testing_task
